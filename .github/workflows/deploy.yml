@@ -1,44 +1,16 @@
-name: Conjur-Policy-Audit
-
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+on: [push]
 
 jobs:
-  deploy:
-    runs-on: self-hosted
+  test:
+    # ...
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Deploy Policy via API
-        shell: powershell 
-        run: |
-          [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
-          
-          # Gunakan variable agar lebih rapi
-          $apiKey = '${{ secrets.CONJUR_API_KEY }}'.Trim()
-          $policyPath = "policies/scm.yml"
-          
-          $authUri = "${{ vars.CONJUR_URL }}/authn/${{ vars.CONJUR_ACCOUNT }}/${{ vars.CONJUR_USERNAME }}/authenticate"
-          $policyUri = "${{ vars.CONJUR_URL }}/policies/${{ vars.CONJUR_ACCOUNT }}/policy/root"
-
-          # 1. Ambil Token
-          Write-Host "Sedang mengautentikasi ${{ vars.CONJUR_USERNAME }}..."
-          $token = Invoke-RestMethod -Method Post -Uri $authUri -Body $apiKey -ContentType "text/plain"
-          
-          # 2. Encode Token ke Base64
-          $tokenBytes = [System.Text.Encoding]::UTF8.GetBytes($token)
-          $base64Token = [Convert]::ToBase64String($tokenBytes)
-
-          $headers = @{
-              "Authorization" = "Token token=`"$base64Token`""
-          }
-
-          # 3. Kirim Policy
-          Write-Host "Mengirim policy $policyPath ke Conjur..."
-          $policyContent = Get-Content -Raw -Path $policyPath
-          Invoke-RestMethod -Method Post -Uri $policyUri -Headers $headers -Body $policyContent -ContentType "text/plain"
-          
-          Write-Host "BERHASIL! Policy terupdate dan teraudit."
+      # ...
+      - name: Import Secrets using CyberArk Conjur Secret Fetcher Action
+        uses: cyberark/conjur-action@v2.0.5
+        with:
+          url: ${{ secrets.CONJUR_URL }}
+          account: conjur
+          host_id: ${{ secrets.CONJUR_USERNAME }}
+          api_key: ${{ secrets.CONJUR_API_KEY }}
+          secrets: db/sqlusername|sql_username;db/sql_password
+      # ...
