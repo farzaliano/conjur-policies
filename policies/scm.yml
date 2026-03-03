@@ -5,5 +5,5 @@
     authn/api-key: true
 
 - !grant
-  role: !group security-admin
+  role: !group vault01/secrets-admins
   member: !host github-actions-worker
