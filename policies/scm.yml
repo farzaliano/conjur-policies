@@ -1,0 +1,9 @@
+- !host
+  id: github-actions-worker
+  annotations:
+    description: "Identitas untuk pipeline CI/CD GitHub"
+    authn/api-key: true
+
+- !grant
+  role: !group security-admin
+  member: !host github-actions-worker

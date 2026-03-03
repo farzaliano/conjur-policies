@@ -1,5 +1,0 @@
-- !host
-  id: bamboo-scm
-  annotations:
-    description: "Host untuk server automation Bamboo"
-    owner: farzaliano
