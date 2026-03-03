@@ -13,16 +13,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy Policy via API
-        # Ganti ke powershell bawaan Windows
         shell: powershell 
         run: |
+          # BARIS INI WAJIB: Memaksa Windows mengabaikan error sertifikat SSL
+          [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+          
           $policy_content = Get-Content -Raw -Path "policies/scm.yml"
-          
           $uri = "${{ vars.CONJUR_URL }}/policies/${{ vars.CONJUR_ACCOUNT }}/policy/root"
-          
-          # Melakukan autentikasi dan mendapatkan token
           $auth_uri = "${{ vars.CONJUR_URL }}/authn/${{ vars.CONJUR_ACCOUNT }}/${{ vars.CONJUR_USERNAME }}/authenticate"
-          $token = Invoke-RestMethod -Method Post -Uri $auth_uri -Body '${{ secrets.CONJUR_API_KEY }}' -SkipCertificateCheck
+
+          # Autentikasi untuk ambil token
+          $token = Invoke-RestMethod -Method Post -Uri $auth_uri -Body '${{ secrets.CONJUR_API_KEY }}'
           $base64Token = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($token))
 
           $headers = @{
@@ -30,4 +31,4 @@ jobs:
           }
 
           # Kirim policy ke Conjur
-          Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $policy_content -ContentType "text/plain" -SkipCertificateCheck
+          Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $policy_content -ContentType "text/plain"
