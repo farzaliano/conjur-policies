@@ -26,6 +26,7 @@ jobs:
           account: ${{ vars.CONJUR_ACCOUNT }}
           host_id: ${{ vars.CONJUR_USERNAME }}
           api_key: ${{ secrets.CONJUR_API_KEY }}
+          batch_file: 'policies/bamboo.yaml'
           # certificate: ${{ secrets.SSL_CERTIFICATE }}
           secrets: database/db_username|DB_USERNAME;database/db_password|DB_PASSWORD
                  
