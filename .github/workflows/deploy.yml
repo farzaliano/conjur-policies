@@ -1,42 +1,29 @@
-name: API-Key-Auth
+name: Conjur-Policy-Audit
 
-# Controls when the workflow will run
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  test:
+  deploy:
     runs-on: self-hosted
-    permissions:
-      id-token: write
-      contents: read
-
     steps:
-      # - name: Debug OIDC Claims
-      #   uses: github/actions-oidc-debugger@main
-      #   with:
-      #     audience: '${{ github.server_url }}/${{ github.repository_owner }}'
-          
-      - name: Import Secrets using CyberArk Conjur Secret Fetcher Action
-        uses: vignesh-seethapathy/conjur-action@master
-        with:
-          url: ${{ vars.CONJUR_URL }}
-          account: ${{ vars.CONJUR_ACCOUNT }}
-          host_id: ${{ vars.CONJUR_USERNAME }}
-          api_key: ${{ secrets.CONJUR_API_KEY }}
-          batch_file: 'policies/scm.yaml'
-          # certificate: ${{ secrets.SSL_CERTIFICATE }}
-          secrets: database/db_username|DB_USERNAME;database/db_password|DB_PASSWORD
-                 
-      - name: Set secret values to env 
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy Policy via API
+        shell: pwsh
         run: |
-          echo "userid=$DB_USERNAME" > env_vars.txt
-          echo "pwd=$DB_PASSWORD" >> env_vars.txt            
+          # Membaca isi file policy
+          $policy_content = Get-Content -Raw -Path "policies/scm.yml"
           
-      - name: Upload env file as an artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: env-vars
-          path: env_vars.txt
+          # Kirim ke Conjur API (Method Post untuk Load Policy)
+          # Mengabaikan pengecekan SSL sementara agar tidak error di jaringan lokal
+          $uri = "${{ vars.CONJUR_URL }}/policies/${{ vars.CONJUR_ACCOUNT }}/policy/root"
+          
+          $headers = @{
+              "Authorization" = "Token token=`"$((Invoke-RestMethod -Method Post -Uri '${{ vars.CONJUR_URL }}/authn/${{ vars.CONJUR_ACCOUNT }}/${{ vars.CONJUR_USERNAME }}/authenticate' -Body '${{ secrets.CONJUR_API_KEY }}' -SkipCertificateCheck).ToString())`""
+          }
+
+          Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $policy_content -ContentType "text/plain" -SkipCertificateCheck
