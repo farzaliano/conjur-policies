@@ -15,20 +15,30 @@ jobs:
       - name: Deploy Policy via API
         shell: powershell 
         run: |
-          # BARIS INI WAJIB: Memaksa Windows mengabaikan error sertifikat SSL
           [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
           
-          $policy_content = Get-Content -Raw -Path "policies/scm.yml"
-          $uri = "${{ vars.CONJUR_URL }}/policies/${{ vars.CONJUR_ACCOUNT }}/policy/root"
-          $auth_uri = "${{ vars.CONJUR_URL }}/authn/${{ vars.CONJUR_ACCOUNT }}/${{ vars.CONJUR_USERNAME }}/authenticate"
+          # Gunakan variable agar lebih rapi
+          $apiKey = '${{ secrets.CONJUR_API_KEY }}'.Trim()
+          $policyPath = "policies/scm.yml"
+          
+          $authUri = "${{ vars.CONJUR_URL }}/authn/${{ vars.CONJUR_ACCOUNT }}/${{ vars.CONJUR_USERNAME }}/authenticate"
+          $policyUri = "${{ vars.CONJUR_URL }}/policies/${{ vars.CONJUR_ACCOUNT }}/policy/root"
 
-          # Autentikasi untuk ambil token
-          $token = Invoke-RestMethod -Method Post -Uri $auth_uri -Body '${{ secrets.CONJUR_API_KEY }}'
-          $base64Token = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($token))
+          # 1. Ambil Token
+          Write-Host "Sedang mengautentikasi ${{ vars.CONJUR_USERNAME }}..."
+          $token = Invoke-RestMethod -Method Post -Uri $authUri -Body $apiKey -ContentType "text/plain"
+          
+          # 2. Encode Token ke Base64
+          $tokenBytes = [System.Text.Encoding]::UTF8.GetBytes($token)
+          $base64Token = [Convert]::ToBase64String($tokenBytes)
 
           $headers = @{
               "Authorization" = "Token token=`"$base64Token`""
           }
 
-          # Kirim policy ke Conjur
-          Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $policy_content -ContentType "text/plain"
+          # 3. Kirim Policy
+          Write-Host "Mengirim policy $policyPath ke Conjur..."
+          $policyContent = Get-Content -Raw -Path $policyPath
+          Invoke-RestMethod -Method Post -Uri $policyUri -Headers $headers -Body $policyContent -ContentType "text/plain"
+          
+          Write-Host "BERHASIL! Policy terupdate dan teraudit."
