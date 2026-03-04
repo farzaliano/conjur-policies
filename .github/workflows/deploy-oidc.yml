@@ -1,0 +1,20 @@
+name: Deploy with OIDC
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Import Secrets using OIDC
+        uses: cyberark/conjur-action@v2.0.5
+        with:
+          url: ${{ vars.CONJUR_URL }}
+          account: conjur
+          authn_type: authn-oidc/github
+          service_id: github 
+          host_id: host/github-apps/my-repo-name
+          secrets: db/sqlusername|sql_username;db/sql_password
