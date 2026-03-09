@@ -13,9 +13,9 @@ jobs:
 
       - name: Install Conjur CLI
         run: |
-          wget https://github.com/cyberark/conjur-cli-go/releases/download/v0.8.1/conjur-cli-go_0.8.1_linux_amd64.tar.gz
-          tar -xzf conjur-cli-go_0.8.1_linux_amd64.tar.gz
-          sudo mv conjur /usr/local/bin/conjur
+          sudo apt update
+          sudo apt install -y ruby-full
+          sudo gem install conjur-cli
           conjur --version
 
       - name: Authenticate & Load Policy
@@ -26,7 +26,7 @@ jobs:
           CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
 
         run: |
-          echo "Initializing Conjur CLI.."
+          echo "Initializing Conjur CLI..."
 
           conjur init \
             --url "$CONJUR_URL" \
