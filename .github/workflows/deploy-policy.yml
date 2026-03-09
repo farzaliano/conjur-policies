@@ -43,6 +43,6 @@ jobs:
 
           conjur policy load \
             -b root \
-            -f policies/policy-branch.yml
+            -f policies/host-jenkins.yml
 
           echo "Done!"
