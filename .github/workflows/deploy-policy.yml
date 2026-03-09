@@ -1,37 +1,38 @@
-name:
+name: Load Conjur Policy
 
 on:
   push:
 
 jobs:
-  deploy-policies:
-    runs-on: ubuntu-latest
-    environment: Production
+  load-policy:
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Conjur CLI
+      - name: Authenticate & Load Policy to Conjur
+        env:
+          CONJUR_URL: ${{ secrets.CONJUR_APPLIANCE_URL }}
+          CONJUR_ACCOUNT: ${{ secrets.CONJUR_ACCOUNT }}
+          CONJUR_LOGIN: ${{ secrets.CONJUR_AUTHN_LOGIN }}
+          CONJUR_API_KEY: ${{ secrets.CONJUR_AUTHN_API_KEY }}
         run: |
-          wget https://github.com/cyberark/conjur-cli-go/releases/download/v8.0.12/conjur-cli-go_8.0.12_linux_amd64.tar.gz
-          tar -xvzf conjur-cli-go_8.0.12_linux_amd64.tar.gz
-          sudo mv conjur-cli-go_8.0.12_linux_amd64/conjur /usr/local/bin/
-
-      - name: Configure Conjur
-        run: |
+          echo "🔐 Initializing Conjur CLI..."
           conjur init \
-            --url "${{ secrets.CONJUR_URL }}" \
-            --account conjur \
-            --self-signed
+            --url "$CONJUR_URL" \
+            --account "$CONJUR_ACCOUNT" \
+            --ca-cert /home/runner/ca-chain-cluster.crt \
+            --force
 
-      - name: Login to Conjur
-        run: |
-          conjur login --identifier "${{ secrets.CONJUR_USERNAME }}" --api-key "${{ secrets.CONJUR_API_KEY }}"
+          echo "🔑 Logging in to Conjur..."
+          conjur login \
+            --id "$CONJUR_LOGIN" \
+            --password "$CONJUR_API_KEY"
 
-      - name: Apply All Policies (Audit Enabled)
-        run: |
-          for file in policies/*.yaml; do
-            echo "Processing $file..."
-            conjur policy replace -b root -f "$file"
-          done
+          echo "📄 Loading policy to Conjur..."
+          conjur policy load \
+            -b root \
+            -f policies/policy-branch.yml
+
+          echo "✅ Done!"
