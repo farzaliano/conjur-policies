@@ -2,44 +2,40 @@ name: Load Conjur Policy
 
 on:
   push:
-  
+    branches:
+      - main
+    paths:
+      - 'policies/**'
 
 jobs:
   load-policy:
     runs-on: self-hosted
 
-    env:
-      CONJUR_URL: ${{ vars.CONJUR_URL }}
-      CONJUR_ACCOUNT: ${{ vars.CONJUR_ACCOUNT }}
-      CONJUR_USERNAME: ${{ vars.CONJUR_USERNAME }}
-      CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
-      
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Install Conjur CLI
-        shell: powershell
+      - name: Authenticate & Load Policy to Conjur
+        env:
+          CONJUR_URL: ${{ vars.CONJUR_URL }}
+          CONJUR_ACCOUNT: ${{ vars.CONJUR_ACCOUNT }}
+          CONJUR_USERNAME: ${{ vars.CONJUR_USERNAME }}
+          CONJUR_API_KEY: ${{ secrets.CONJUR_AUTHN_API_KEY }}
         run: |
-          choco install conjur-cli -y
+          echo "🔐 Initializing Conjur CLI..."
+          conjur init \
+            --url "$CONJUR_URL" \
+            --account "$CONJUR_ACCOUNT" \
+            --force
 
-      - name: Load Policy
-        shell: powershell
-        run: |
-          Write-Host "Initializing Conjur CLI..."
+          echo "🔑 Logging in to Conjur..."
+          conjur login \
+            --id "$CONJUR_LOGIN" \
+            --password "$CONJUR_API_KEY"
 
-          conjur init `
-            --url "$env:CONJUR_URL" `
-            --account "$env:CONJUR_ACCOUNT" `
-            --force true
+          echo "📄 Loading policy to Conjur..."
+          conjur policy load \
+            -b root \
+            -f policies/policy-branch.yml
 
-          Write-Host "Logging in..."
-
-          conjur login `
-            --id "$env:CONJUR_USERNAME" `
-            --password "$env:CONJUR_API_KEY"
-
-          Write-Host "Loading policy..."
-
-          conjur policy load `
-            -b root `
-            -f policies/host-jenkins.yml
+          echo "✅ Done!"
