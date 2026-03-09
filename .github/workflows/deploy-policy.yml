@@ -21,9 +21,9 @@ jobs:
         run: |
           echo "Initializing Conjur CLI..."
 
-          conjur init `
-            --url $env:CONJUR_URL `
-            --account $env:CONJUR_ACCOUNT `
+          conjur init \
+            --url $env:CONJUR_URL \
+            --account $env:CONJUR_ACCOUNT \
             --force
 
           echo "Logging in to Conjur..."
