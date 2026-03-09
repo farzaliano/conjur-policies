@@ -15,8 +15,11 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y ruby-full
+
           sudo gem install conjur-cli
-          echo 'RUBYOPT=-rlogger' >> $GITHUB_ENV
+
+          sudo sed -i '1irequire "logger"' /usr/local/bin/conjur
+
           conjur --version
 
       - name: Authenticate & Load Policy
