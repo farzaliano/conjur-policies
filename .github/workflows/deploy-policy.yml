@@ -31,7 +31,6 @@ jobs:
           conjur init \
             --url "$CONJUR_URL" \
             --account "$CONJUR_ACCOUNT" \
-            --ca-cert D:\Farzaliano\Farzaliano\Conjur\policies\actions-runner/ca-chain-cluster.crt \
             --force true
 
           echo "Logging in..."
