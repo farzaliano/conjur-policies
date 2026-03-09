@@ -8,13 +8,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
     
-      -  name: Install Conjur CLI
-         run: |
-          # Mengunduh versi spesifik yang stabil
+      - name: Install Conjur CLI
+        run: |
           wget https://github.com/cyberark/conjur-cli-go/releases/download/v8.0.12/conjur-cli-go_8.0.12_linux_amd64.tar.gz
           tar -xvzf conjur-cli-go_8.0.12_linux_amd64.tar.gz
-          sudo mv conjur /usr/local/bin/
-          conjur --version # Memastikan instalasi berhasil
+          # Pindahkan dari dalam folder hasil ekstraksi
+          sudo mv conjur-cli-go_8.0.12_linux_amd64/conjur /usr/local/bin/
+          conjur --version
 
       - name: Configure Conjur
         run: |
