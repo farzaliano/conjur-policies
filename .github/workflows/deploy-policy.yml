@@ -20,7 +20,7 @@ jobs:
       - name: Authenticate & Load Policy
         env:
           CONJUR_URL: ${{ secrets.CONJUR_URL }}
-          CONJUR_ACCOUNT: conjur
+          CONJUR_ACCOUNT: Vistakom
           CONJUR_LOGIN: ${{ secrets.CONJUR_USERNAME }}
           CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
 
