@@ -1,33 +1,16 @@
-name:
-
 on:
   push:
 
 jobs:
-  deploy-policies:
+  test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Install Conjur CLI
-        run: |
-          wget https://github.com/cyberark/conjur-cli-go/releases/download/v8.0.12/conjur-cli-go_8.0.12_linux_amd64.tar.gz
-          tar -xvzf conjur-cli-go_8.0.12_linux_amd64.tar.gz
-          sudo mv conjur-cli-go_8.0.12_linux_amd64/conjur /usr/local/bin/
-
-      - name: Configure Conjur
-        run: |
-          # Menggunakan flag -c untuk sertifikat atau --self-signed jika belum stabil
-          conjur init -u "${{ secrets.CONJUR_URL }}" -a conjur --self-signed
-
-      - name: Login to Conjur
-        run: |
-          conjur login -i "${{ secrets.CONJUR_USERNAME }}" -p "${{ secrets.CONJUR_API_KEY }}"
-
-      - name: Apply All Policies (Audit Enabled)
-        run: |
-          for file in policies/*.yaml; do
-            echo "Processing $file..."
-            conjur policy replace -b root -f "$file"
-          done
+      - name: Import Secrets using CyberArk Conjur Secret Fetcher Action
+        uses: cyberark/conjur-action@v2.0.5
+        with:
+          url: ${{ secrets.CONJUR_URL }}
+          account: conjur
+          host_id: ${{ secrets.CONJUR_USERNAME }}
+          api_key: ${{ secrets.CONJUR_API_KEY }}
+          secrets: db/sqlusername|sql_username;db/sql_password

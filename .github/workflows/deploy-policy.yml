@@ -18,12 +18,12 @@ jobs:
 
       - name: Configure Conjur
         run: |
-          # Menggunakan flag -c untuk sertifikat atau --self-signed jika belum stabil
-          conjur init -u "${{ secrets.CONJUR_URL }}" -a conjur --self-signed
+          # Menggunakan yes untuk menjawab otomatis jika ada prompt sertifikat
+          echo "yes" | conjur init --url "${{ secrets.CONJUR_URL }}" --account conjur --self-signed
 
       - name: Login to Conjur
         run: |
-          conjur login -i "${{ secrets.CONJUR_USERNAME }}" -p "${{ secrets.CONJUR_API_KEY }}"
+          conjur login --identifier "${{ secrets.CONJUR_USERNAME }}" --api-key "${{ secrets.CONJUR_API_KEY }}"
 
       - name: Apply All Policies (Audit Enabled)
         run: |
