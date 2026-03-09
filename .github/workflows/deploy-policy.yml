@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CONJUR_URL: ${{ secrets.CONJUR_URL }}
       CONJUR_ACCOUNT: ${{ secrets.CONJUR_ACCOUNT }}
+      CONJUR_URL: ${{ secrets.CONJUR_URL }}
       CONJUR_USERNAME: ${{ secrets.CONJUR_USERNAME }}
       CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
 
