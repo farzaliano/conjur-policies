@@ -25,7 +25,7 @@ jobs:
           CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
 
         run: |
-          echo "Initializing Conjur CLI..."
+          echo "Initializing Conjur CLI.."
 
           conjur init \
             --url "$CONJUR_URL" \
