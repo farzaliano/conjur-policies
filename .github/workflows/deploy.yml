@@ -2,10 +2,7 @@ name:
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'policies/**'
+
 
 jobs:
   deploy-policies:
