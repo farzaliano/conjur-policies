@@ -34,5 +34,5 @@ jobs:
           conjur policy load `
             -b root `
             -f policies/policy-branch.yml
-
+            
           Write-Host "Done!"
