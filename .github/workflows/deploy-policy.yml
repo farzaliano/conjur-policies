@@ -32,7 +32,7 @@ jobs:
           conjur init \
             --url "$CONJUR_URL" \
             --account "$CONJUR_ACCOUNT" \
-            --force
+            --force true
 
           echo "Logging in to Conjur..."
 
