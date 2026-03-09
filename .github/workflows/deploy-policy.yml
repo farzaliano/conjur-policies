@@ -21,24 +21,24 @@ jobs:
 
       - name: Authenticate & Load Policy
         env:
-          CONJUR_URL: ${{ secrets.CONJUR_URL }}
-          CONJUR_ACCOUNT: conjur
-          CONJUR_USERNAME: ${{ secrets.CONJUR_USERNAME }}
-          CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
+          url: ${{ secrets.CONJUR_URL }}
+          account: conjur
+          host_id: ${{ secrets.CONJUR_USERNAME }}
+          api_key: ${{ secrets.CONJUR_API_KEY }}
 
         run: |
           echo "Initializing Conjur CLI..."
 
           conjur init \
-            --url "$CONJUR_URL" \
+            --url "$url" \
             --account "$CONJUR_ACCOUNT" \
             --force true
 
           echo "Logging in to Conjur..."
 
           conjur login \
-            --id "$CONJUR_USERNAME" \
-            --password "$CONJUR_API_KEY"
+            --id "host_id" \
+            --password "$api_key"
 
           echo "Loading policy..."
 
