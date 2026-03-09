@@ -11,6 +11,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Install Conjur CLI
+        run: |
+          curl -LO https://github.com/cyberark/conjur-cli-go/releases/latest/download/conjur-linux-amd64
+          chmod +x conjur-linux-amd64
+          sudo mv conjur-linux-amd64 /usr/local/bin/conjur
+
       - name: Authenticate & Load Policy
         env:
           CONJUR_URL: ${{ secrets.CONJUR_URL }}
@@ -22,20 +28,20 @@ jobs:
           echo "Initializing Conjur CLI..."
 
           conjur init \
-            --url $env:CONJUR_URL \
-            --account $env:CONJUR_ACCOUNT \
+            --url "$CONJUR_URL" \
+            --account "$CONJUR_ACCOUNT" \
             --force
 
           echo "Logging in to Conjur..."
 
-          conjur login `
-            --id $env:CONJUR_LOGIN `
-            --password $env:CONJUR_API_KEY
+          conjur login \
+            --id "$CONJUR_LOGIN" \
+            --password "$CONJUR_API_KEY"
 
           echo "Loading policy..."
 
-          conjur policy load `
-            -b root `
+          conjur policy load \
+            -b root \
             -f policies/policy-branch.yml
 
           echo "Done!"
