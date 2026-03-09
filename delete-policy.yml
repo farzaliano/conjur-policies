@@ -1,2 +1,0 @@
-- !delete
-  record: !policy conjur/cluster/conjur-cluster

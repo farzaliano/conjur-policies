@@ -1,3 +1,0 @@
-- !grant
-  role: !group vault01/secrets/bamboo/delegation/consumers
-  member: !host bamboo

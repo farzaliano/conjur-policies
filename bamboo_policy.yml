@@ -1,9 +1,0 @@
-- !group vault01/secrets/bamboo/delegation/consumers
-
-- !grant
-  role: !group vault01/secrets/bamboo/delegation/consumers
-  member: !user admin
-
-- !policy
-  id: bamboo-server
-  owner: !group vault01/secrets/bamboo/delegation/consumers

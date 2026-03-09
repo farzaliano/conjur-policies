@@ -1,4 +1,0 @@
-- !permit
-  role: !host jenkins
-  privileges: [read, execute]
-  resource: !variable vault01/secrets/jenkins/Database-Test-DB-MySQL-172.70.70.80-root/password
