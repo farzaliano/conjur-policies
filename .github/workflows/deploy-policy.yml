@@ -18,7 +18,7 @@ jobs:
           sudo gem install conjur-cli
           sudo sed -i '2irequire "logger"' /usr/local/bin/conjur
           conjur --version
-
+          
       - name: Authenticate & Load Policy
         env:
           CONJUR_URL: ${{ secrets.CONJUR_URL }}
