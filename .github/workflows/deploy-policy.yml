@@ -15,11 +15,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y ruby-full
-
           sudo gem install conjur-cli
-
-          sudo sed -i '1irequire "logger"' /usr/local/bin/conjur
-
+          sudo sed -i '2irequire "logger"' /usr/local/bin/conjur
           conjur --version
 
       - name: Authenticate & Load Policy
@@ -30,23 +27,15 @@ jobs:
           CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
 
         run: |
-          echo "Initializing Conjur CLI..."
-
           conjur init \
             --url "$CONJUR_URL" \
             --account "$CONJUR_ACCOUNT" \
             --force
 
-          echo "Logging in to Conjur..."
-
           conjur login \
             --id "$CONJUR_LOGIN" \
             --password "$CONJUR_API_KEY"
 
-          echo "Loading policy..."
-
           conjur policy load \
             -b root \
             -f policies/policy-branch.yml
-
-          echo "Done!"
