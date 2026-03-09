@@ -13,9 +13,10 @@ jobs:
 
       - name: Install Conjur CLI
         run: |
-          curl -LO https://github.com/cyberark/conjur-cli-go/releases/latest/download/conjur-linux-amd64
-          chmod +x conjur-linux-amd64
-          sudo mv conjur-linux-amd64 /usr/local/bin/conjur
+          curl -L https://github.com/cyberark/conjur-cli-go/releases/latest/download/conjur-cli-go_linux_amd64.tar.gz -o conjur.tar.gz
+          tar -xzf conjur.tar.gz
+          sudo mv conjur /usr/local/bin/conjur
+          conjur --version
 
       - name: Authenticate & Load Policy
         env:
