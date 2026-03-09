@@ -13,11 +13,17 @@ jobs:
 
       - name: Install Conjur CLI
         run: |
-          curl -L https://github.com/cyberark/conjur-cli-go/releases/latest/download/conjur-cli-go_linux_amd64.tar.gz -o conjur.tar.gz
-          tar -xzf conjur.tar.gz
-          sudo mv conjur /usr/local/bin/conjur
-          conjur --version
+          run: |
+          curl -fsSL https://apt.conjur.net/public.gpg | sudo gpg --dearmor -o /usr/share/keyrings/conjur.gpg
 
+          echo "deb [signed-by=/usr/share/keyrings/conjur.gpg] https://apt.conjur.net stable main" \
+            | sudo tee /etc/apt/sources.list.d/conjur.list
+
+          sudo apt update
+          sudo apt install -y conjur-cli
+
+          conjur --version
+          
       - name: Authenticate & Load Policy
         env:
           CONJUR_URL: ${{ secrets.CONJUR_URL }}
