@@ -13,10 +13,10 @@ jobs:
 
       - name: Authenticate & Load Policy to Conjur
         env:
-          CONJUR_URL: ${{ secrets.CONJUR_URL }}
-          CONJUR_ACCOUNT: ${{ secrets.CONJUR_ACCOUNT }}
-          CONJUR_LOGIN: ${{ secrets.CONJUR_USERNAME }}
-          CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
+          url: ${{ secrets.CONJUR_URL }}
+          account: conjur
+          host_id: ${{ secrets.CONJUR_USERNAME }}
+          api_key: ${{ secrets.CONJUR_API_KEY }}
         run: |
           echo "Initializing Conjur CLI..."
           conjur init \
