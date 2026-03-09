@@ -1,4 +1,4 @@
-name: Deploy Conjur Policies
+name:
 
 on:
   push:
