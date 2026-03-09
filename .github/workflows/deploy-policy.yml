@@ -1,4 +1,4 @@
-name: Load Conjur Policy
+name:
 
 on:
   push:
@@ -12,32 +12,22 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Authenticate & Load Policy to Conjur
-        shell: bash
         env:
-          CONJUR_URL: ${{ secrets.CONJUR_URL }}
-          CONJUR_ACCOUNT: conjur
-          CONJUR_LOGIN: ${{ secrets.CONJUR_USERNAME }}
-          CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
+          url: ${{ secrets.CONJUR_URL }}
+          account: conjur
+          host_id: ${{ secrets.CONJUR_USERNAME }}
+          api_key: ${{ secrets.CONJUR_API_KEY }}
+          run: |
+            echo "Initializing Conjur CLI..."
 
-        run: |
-          echo "Initializing Conjur CLI..."
+            conjur init `
+              --url $env:CONJUR_URL `
+              --account $env:CONJUR_ACCOUNT `
+              --ca-cert /home/runner/ca-chain-cluster.crt `
+              --force
 
-          conjur init \
-            --url "$CONJUR_URL" \
-            --account "$CONJUR_ACCOUNT" \
-            --ca-cert /home/runner/ca-chain-cluster.crt \
-            --force
+            echo "Logging in to Conjur..."
 
-          echo "Logging in to Conjur..."
-
-          conjur login \
-            --id "$CONJUR_LOGIN" \
-            --password "$CONJUR_API_KEY"
-
-          echo "Loading policy..."
-
-          conjur policy load \
-            -b root \
-            -f policies/policy-branch.yml
-
-          echo "Done!"
+            conjur login `
+              --id $env:CONJUR_LOGIN `
+              --password $env:CONJUR_API_KEY
