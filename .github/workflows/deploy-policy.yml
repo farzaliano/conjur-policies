@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CONJUR_URL: https://conjur-cluster.la.local
-      CONJUR_ACCOUNT: Vistakom
-      CONJUR_USERNAME: host/github-actions-worker
+      CONJUR_URL: ${{ secrets.CONJUR_URL }}
+      CONJUR_ACCOUNT: ${{ secrets.CONJUR_ACCOUNT }}
+      CONJUR_USERNAME: ${{ secrets.CONJUR_USERNAME }}
       CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
       
     steps:
@@ -23,9 +23,7 @@ jobs:
           sudo gem install conjur-cli
           sudo sed -i '2irequire "logger"' /usr/local/bin/conjur
           conjur --version
-
-      - name: Load Policy
-        run: |
+          
           echo "Initializing Conjur CLI..."
 
           conjur init \
