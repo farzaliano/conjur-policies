@@ -23,21 +23,23 @@ jobs:
 
       - name: Load Policy
         run: |
-          echo "Initializing Conjur CLI..."
+          Write-Host "Initializing Conjur CLI..."
 
-          conjur init \
-            --url "$CONJUR_URL" \
-            --account "$CONJUR_ACCOUNT" \
+          conjur init `
+            --url "$env:CONJUR_URL" `
+            --account "$env:CONJUR_ACCOUNT" `
             --force true
 
-          echo "Logging in..."
+          Write-Host "Logging in..."
 
-          conjur login \
-            --id "$CONJUR_USERNAME" \
-            --password "$CONJUR_API_KEY"
+          conjur login `
+            --id "$env:CONJUR_USERNAME" `
+            --password "$env:CONJUR_API_KEY"
 
-          echo "Loading policy..."
+          Write-Host "Loading policy..."
 
-          conjur policy load \
-            -b root \
+          conjur policy load `
+            -b root `
             -f policies/host-jenkins.yml
+
+          Write-Host "Done!"
