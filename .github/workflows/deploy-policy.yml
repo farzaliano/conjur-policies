@@ -30,7 +30,7 @@ jobs:
           conjur init \
             --url "$CONJUR_URL" \
             --account "$CONJUR_ACCOUNT" \
-            --force
+            --force true
 
           conjur login \
             --id "$CONJUR_LOGIN" \
