@@ -13,7 +13,6 @@ jobs:
 
       - name: Install Conjur CLI
         run: |
-          run: |
           curl -fsSL https://apt.conjur.net/public.gpg | sudo gpg --dearmor -o /usr/share/keyrings/conjur.gpg
 
           echo "deb [signed-by=/usr/share/keyrings/conjur.gpg] https://apt.conjur.net stable main" \
