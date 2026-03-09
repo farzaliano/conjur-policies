@@ -17,11 +17,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Conjur CLI
+- name: Install Conjur CLI
+        shell: powershell
         run: |
-          echo "Initializing Conjur CLI..."
+          choco install conjur-cli -y
 
       - name: Load Policy
+        shell: powershell
         run: |
           Write-Host "Initializing Conjur CLI..."
 
@@ -41,5 +43,3 @@ jobs:
           conjur policy load `
             -b root `
             -f policies/host-jenkins.yml
-
-          Write-Host "Done!"
