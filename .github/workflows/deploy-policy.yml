@@ -18,11 +18,11 @@ jobs:
           sudo gem install conjur-cli
           sudo sed -i '2irequire "logger"' /usr/local/bin/conjur
           conjur --version
-          
+
       - name: Authenticate & Load Policy
         env:
           CONJUR_URL: ${{ secrets.CONJUR_URL }}
-          CONJUR_ACCOUNT: ${{ secrets.CONJUR_ACCOUNT }}
+          CONJUR_ACCOUNT: conjur
           CONJUR_USERNAME: ${{ secrets.CONJUR_USERNAME }}
           CONJUR_API_KEY: ${{ secrets.CONJUR_API_KEY }}
 
