@@ -7,7 +7,7 @@ jobs:
   deploy-policies:
     runs-on: ubuntu-latest
     environment: Production
-    
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -20,8 +20,10 @@ jobs:
 
       - name: Configure Conjur
         run: |
-          # Menggunakan yes untuk menjawab otomatis jika ada prompt sertifikat
-          echo "yes" | conjur init --url "${{ secrets.CONJUR_URL }}" --account conjur --self-signed
+          conjur init \
+            --url "${{ secrets.CONJUR_URL }}" \
+            --account conjur \
+            --self-signed
 
       - name: Login to Conjur
         run: |
