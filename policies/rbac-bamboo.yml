@@ -1,0 +1,39 @@
+- !policy
+  id: vault01/secrets/bamboo
+  body:
+
+    - !policy
+      id: delegation
+      body:
+        - !group consumers
+        - !group viewers
+        - !group admins
+
+    - !host bamboo-server
+
+    - !grant
+      role: !group delegation/consumers
+      member: !host bamboo-server
+
+    - &app01_vars
+      - !variable app01/host
+      - !variable app01/port
+      - !variable app01/database
+      - !variable app01/username
+      - !variable app01/password
+
+
+    - !permit
+      role: !group delegation/consumers
+      privileges: [ read, execute ]
+      resources: *app01_vars
+
+    - !permit
+      role: !group delegation/viewers
+      privileges: [ read ]
+      resources: *app01_vars
+
+    - !permit
+      role: !group delegation/admins
+      privileges: [ read, execute, update ]
+      resources: *app01_vars

@@ -1,0 +1,4 @@
+- !policy
+  id: conjur/authn-oidc/github
+  body:
+    - !webservice

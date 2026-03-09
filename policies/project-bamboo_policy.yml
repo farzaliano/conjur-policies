@@ -1,0 +1,18 @@
+- !policy
+  id: project-bamboo
+  body:
+    - &variables
+      - !variable database-connection
+
+    - !host bamboo-server
+
+    - !layer project-bamboo
+
+    - !grant
+      role: !layer project-bamboo
+      member: !host bamboo
+
+    - !permit
+      role: !layer project-bamboo
+      privileges: [ read, execute ]
+      resources: *variables

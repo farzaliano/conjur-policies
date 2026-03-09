@@ -1,0 +1,14 @@
+- !policy
+  id: conjur/authn-oidc/github
+  body:
+    - !webservice
+
+- !host
+  id: github-apps/my-repo-name
+  annotations:
+    authn-oidc/github/sub: repo:farzaliano/conjur-policies:ref:refs/heads/main
+    authn-oidc/github/aud: https://github.com/farzaliano
+
+- !grant
+  role: !group vault01/secrets/bamboo/delegation/consumers
+  member: !host github-apps/my-repo-name
