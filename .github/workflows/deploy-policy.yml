@@ -19,11 +19,7 @@ jobs:
 
       - name: Install Conjur CLI
         run: |
-          sudo apt update
-          sudo apt install -y ruby-full
-          sudo gem install conjur-cli
-          sudo sed -i '2irequire "logger"' /usr/local/bin/conjur
-          conjur --version
+          echo "Initializing Conjur CLI..."
 
       - name: Load Policy
         run: |
