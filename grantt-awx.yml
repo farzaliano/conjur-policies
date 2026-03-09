@@ -1,0 +1,3 @@
+- !grant
+  role: !group vault01/secrets/ansible-awx/delegation/consumers
+  member: !host ansible-awx

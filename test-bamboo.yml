@@ -1,0 +1,8 @@
+- !host bamboo-simple
+
+- !variable database-test
+
+- !permit
+  role: !host bamboo-simple
+  privilege: [ read, execute ]
+  resource: !variable database-test
