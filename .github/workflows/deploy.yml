@@ -1,16 +1,39 @@
+name: Deploy Conjur Policies
+
 on:
   push:
+    branches:
+      - main
+    paths:
+      - 'policies/**'
 
 jobs:
-  test:
+  deploy-policies:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Import Secrets using CyberArk Conjur Secret Fetcher Action
-        uses: cyberark/conjur-action@v2.0.5
-        with:
-          url: ${{ secrets.CONJUR_URL }}
-          account: conjur
-          host_id: ${{ secrets.CONJUR_USERNAME }}
-          api_key: ${{ secrets.CONJUR_API_KEY }}
-          secrets: db/sqlusername|sql_username;db/sql_password
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+    
+      - name: Install Conjur CLI
+        run: |
+          curl -L https://github.com/cyberark/conjur-cli-go/releases/latest/download/conjur-linux-amd64 -o conjur
+          chmod +x conjur
+          sudo mv conjur /usr/local/bin/
+
+      - name: Configure Conjur
+        run: |
+          conjur init -u ${{ secrets.CONJUR_URL }} -a conjur --self-signed
+
+      - name: Login to Conjur
+        run: |
+          conjur login -i ${{ secrets.CONJUR_USERNAME }} -p ${{ secrets.CONJUR_API_KEY }}
+
+      - name: Apply All Policies (Audit Enabled)
+        run: |
+          # Meload semua file yaml di folder policies
+          # Perintah 'replace' memastikan Conjur sinkron dengan Git untuk kebutuhan Audit/Rollback
+          for file in policies/*.yaml; do
+            echo "Applying policy: $file"
+            conjur policy replace -b root -f "$file"
+          done
