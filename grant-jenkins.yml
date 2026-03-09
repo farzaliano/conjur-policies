@@ -1,3 +1,0 @@
-- !grant
-  role: !group vault01/secrets/Jenkins/delegation/consumers
-  member: !host jenkins
